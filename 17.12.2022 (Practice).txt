@@ -1,0 +1,174 @@
+-----------------SW1------------
+Switch#configure t
+Switch#configure terminal 
+
+Switch(config)#vlan 10
+Switch(config-vlan)#name IT
+Switch(config-vlan)#exit
+
+Switch(config)#vlan 20
+Switch(config-vlan)#name EEE
+Switch(config-vlan)#exit
+
+Switch(config)#interface range fastEthernet 0/1-10
+Switch(config-if-range)#switchport mode access 
+Switch(config-if-range)#switchport access vlan 10
+Switch(config-if-range)#exit
+
+Switch(config)#interface range fastEthernet 0/11-20
+Switch(config-if-range)#switchport mode access 
+Switch(config-if-range)#switchport access vlan 20
+Switch(config-if-range)#exit
+
+Switch(config)#hostname SW1
+
+SW1(config)#interface gigabitEthernet 0/2
+SW1(config-if)#switchport mode trunk 
+SW1(config-if)#no shutdown 
+
+
+------------------------------SW-2-----------------------------
+Switch#configure terminal 
+
+SE-2(config)#hostname Sw-2
+
+
+Sw-2(config)#vlan 30
+Sw-2(config-vlan)#name ACC
+Sw-2(config-vlan)#exit
+
+Sw-2(config)#vlan 40
+Sw-2(config-vlan)#name HR
+Sw-2(config-vlan)#exit
+
+Sw-2(config)#interface range fastEthernet 0/1-10
+Sw-2(config-if-range)#switchport mode access 
+Sw-2(config-if-range)#switchport access vlan 30
+Sw-2(config-if-range)#exit
+Sw-2(config)#
+
+Sw-2(config)#interface range fastEthernet 0/11-20
+Sw-2(config-if-range)#switchport mode access 
+Sw-2(config-if-range)#switchport access vlan 40
+Sw-2(config-if-range)#exit
+
+Sw-2(config)#interface gigabitEthernet 0/2
+Sw-2(config-if)#switchport mode trunk 
+Sw-2(config-if)#
+Sw-2(config-if)#
+Sw-2(config-if)#
+
+
+
+-----------------------------MLSW-1----------------------------
+
+Switch#configure t
+Switch#configure terminal 
+Switch(config)#hostname MLSW-1
+
+
+MLSW-1(config)#ip routing 
+
+MLSW-1(config)#interface gigabitEthernet 1/0/24
+
+MLSW-1(config-if)#switchport trunk encapsulation dot1q 
+
+MLSW-1(config-if)#exit
+
+MLSW-1(config)#vlan 10
+MLSW-1(config-vlan)#name IT
+MLSW-1(config-vlan)#exit
+
+MLSW-1(config)#vlan 20
+MLSW-1(config-vlan)#name EEE
+MLSW-1(config-vlan)#exit
+
+MLSW-1(config)#interface vlan 10
+MLSW-1(config-if)#
+MLSW-1(config-if)#ip address 192.168.10.1 255.255.255.0
+MLSW-1(config-if)#no shutdown 
+MLSW-1(config-if)#exit
+
+MLSW-1(config)#interface vlan 20
+MLSW-1(config-if)#ip address 192.168.20.1 255.255.255.0
+MLSW-1(config-if)#no shutdown 
+
+MLSW-1(config)#interface gigabitEthernet 1/0/1
+
+MLSW-1(config-if)#no switchport 
+
+MLSW-1(config-if)#ip address 10.10.10.1 255.255.255.252
+MLSW-1(config-if)#no shutdown 
+MLSW-1(config-if)#exit
+
+MLSW-1(config)#router ospf 1
+MLSW-1(config-router)#network 10.10.10.0 0.0.0.3 area 0
+MLSW-1(config-router)#network 192.168.10.0 0.0.0.255 area 0
+MLSW-1(config-router)#network 192.168.20.0 0.0.0.255 area 0
+
+
+-------------------------MLSW-2----------------------------
+Switch#configure terminal 
+Switch(config)#hostname MLSW-2
+
+MLSW-2(config)#vlan 30
+MLSW-2(config-vlan)#name ACC
+MLSW-2(config-vlan)#exit
+
+MLSW-2(config)#vlan 40
+MLSW-2(config-vlan)#name HR
+MLSW-2(config-vlan)#exit
+
+MLSW-2(config)#interface vlan 30
+MLSW-2(config-if)#ip address 192.168.30.1 255.255.255.0
+MLSW-2(config-if)#no shutdown 
+MLSW-2(config-if)#exit
+
+MLSW-2(config)#interface vlan 40
+MLSW-2(config-if)#ip address 192.168.40.1 255.255.255.0
+MLSW-2(config-if)#no shutdown 
+MLSW-2(config-if)#exit
+
+MLSW-2(config)#ip routing 
+
+MLSW-2(config)#interface gigabitEthernet 1/0/24
+
+MLSW-2(config-if)#switchport trunk encapsulation dot1q 
+
+MLSW-2(config-if)#exit
+
+MLSW-2(config)#interface gigabitEthernet 1/0/1
+MLSW-2(config-if)#no switchport 
+
+MLSW-2(config-if)#ip address 10.10.10.6 255.255.255.252
+
+MLSW-2(config-if)#no shutdown 
+
+MLSW-2(config-if)#exit
+
+MLSW-2(config)#router ospf 1
+
+MLSW-2(config-router)#network 10.10.10.4 0.0.0.3 area 0
+MLSW-2(config-router)#network 192.168.30.0 0.0.0.255 area 0
+MLSW-2(config-router)#network 192.168.40.0 0.0.0.255 area 0
+
+
+------------------Router---------------------
+
+Router#configure terminal 
+Router(config)#interface gigabitEthernet 0/0
+Router(config-if)#ip address 10.10.10.2 255.255.255.252
+Router(config-if)#no shutdown 
+Router(config-if)#exit
+
+Router(config)#interface gigabitEthernet 0/1
+Router(config-if)#ip address 10.10.10.5 255.255.255.252
+Router(config-if)#no shutdown 
+
+
+
+Router(config)#router ospf 1
+
+Router(config-router)#network 10.10.10.0 0.0.0.3 area 0
+Router(config-router)#network 10.10.10.4 0.0.0.3 area 0
+
